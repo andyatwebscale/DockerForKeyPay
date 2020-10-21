@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Waiting for SQL Server to initialise"
-sleep 15s
+sleep 30s
 
 echo "Create login payroll"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "USE Master"
