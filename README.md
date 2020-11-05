@@ -20,7 +20,7 @@ This repository contains the Dockerfile for setting up SQL 2019 and importing Co
 ```sh
 docker build -t database .
 
-docker run -d --name "sql2019"  -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SaPassword1" -p 1433:1433 -v ~/C/DbBackupFiles:/backups database
+docker run -d --name "sql2019-ubuntu"  -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=SaPassword1" -p 1433:1433 -v ~/C/DbBackupFiles:/backups database
 ```
 
 - Connect with SSMS / equivalent, to localhost, using Username: 'sa' Password 'SaPassword1'

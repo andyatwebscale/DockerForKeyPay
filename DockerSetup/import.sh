@@ -34,6 +34,12 @@ echo "Restoring Payroll_Common"
 	SET @LogsName = (select LogicalName from @filelist where [Type] ='L')
 	RESTORE DATABASE @DatabaseName FROM DISK=@DatabaseFilename WITH MOVE @DataName TO @NewDataLocation, MOVE @LogsName TO @NewLogsLocation
 
+	ALERT DATABASE @DatabaseName
+	SET RECOVERY SIMPLE
+	GO
+	DBCC SHRINKFILE (@DatabaseName + '_log', 1)
+    GO
+
 	EXEC sp_sqlexec @UseStatement	
 	CREATE USER payroll FOR LOGIN payroll
 "
@@ -65,6 +71,12 @@ echo "Restoring Payroll_Shard4"
 	SET @LogsName = (select LogicalName from @filelist where [Type] ='L')
 	RESTORE DATABASE @DatabaseName FROM DISK=@DatabaseFilename WITH MOVE @DataName TO @NewDataLocation, MOVE @LogsName TO @NewLogsLocation
 
+	ALERT DATABASE @DatabaseName
+	SET RECOVERY SIMPLE
+	GO
+	DBCC SHRINKFILE (@DatabaseName + '_log', 1)
+    GO
+	
 	EXEC sp_sqlexec @UseStatement	
 	CREATE USER payroll FOR LOGIN payroll
 "
@@ -93,6 +105,12 @@ echo "Restoring Payroll_Shard5"
 	SET @LogsName = (select LogicalName from @filelist where [Type] ='L')
 	RESTORE DATABASE @DatabaseName FROM DISK=@DatabaseFilename WITH MOVE @DataName TO @NewDataLocation, MOVE @LogsName TO @NewLogsLocation
 
+	ALERT DATABASE @DatabaseName
+	SET RECOVERY SIMPLE
+	GO
+	DBCC SHRINKFILE (@DatabaseName + '_log', 1)
+    GO
+	
 	EXEC sp_sqlexec @UseStatement	
 	CREATE USER payroll FOR LOGIN payroll
 "
