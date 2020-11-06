@@ -110,6 +110,27 @@ echo "Restoring Payroll_Shard2"
 echo "Setting up Whitelabel Alias for localhost"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelAlias SET WhiteLabelId = (SELECT Id FROM Payroll_Common.dbo.WhiteLabelShard WHERE HostName='keypay.yourpayroll.co.uk') WHERE HostName='localhost'"
 
+echo "Setting up database users"
+
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "
+	DECLARE @UseStatement VARCHAR(128)
+	
+	SET @UseStatement = (SELECT 'USE [Payroll_Common]')
+	EXEC sp_sqlexec @UseStatement	
+	CREATE USER payroll FOR LOGIN payroll
+	
+	SET @UseStatement = (SELECT 'USE [Payroll_Shard2]')
+	EXEC sp_sqlexec @UseStatement	
+	CREATE USER payroll FOR LOGIN payroll
+	
+	SET @UseStatement = (SELECT 'USE [Payroll_Shard4]')
+	EXEC sp_sqlexec @UseStatement	
+	CREATE USER payroll FOR LOGIN payroll
+	
+	SET @UseStatement = (SELECT 'USE [Payroll_Shard5]')
+	EXEC sp_sqlexec @UseStatement	
+	CREATE USER payroll FOR LOGIN payroll
+"
 echo "Clearing transaction logs"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "
 	DECLARE @statement NVARCHAR(500);
