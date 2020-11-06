@@ -33,15 +33,14 @@ sleep 5s
 	
 	RESTORE DATABASE Payroll_Common FROM DISK=@DatabaseFilename WITH MOVE @DataName TO @NewDataLocation, MOVE @LogsName TO @NewLogsLocation
 
-	ALTER DATABASE Payroll_Common SET RECOVERY SIMPLE
+	ALTER DATABASE Payroll_Common SET RECOVERY SIMPLE	
 "
 
 echo "Restoring Payroll_Shard4"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "	
+	USE Master
 	DECLARE @DataName VARCHAR(128)	
-	DECLARE @DatabaseFilename VARCHAR(128)
-	DECLARE @UseStatement VARCHAR(128)
-	
+	DECLARE @DatabaseFilename VARCHAR(128)	
 	DECLARE @LogsName VARCHAR(128)
 	DECLARE @NewDataLocation VARCHAR(128)
 	DECLARE @NewLogsLocation VARCHAR(128)		
@@ -58,11 +57,12 @@ echo "Restoring Payroll_Shard4"
 	
 	RESTORE DATABASE Payroll_Shard4 FROM DISK=@DatabaseFilename WITH MOVE @DataName TO @NewDataLocation, MOVE @LogsName TO @NewLogsLocation   
 
-	ALTER DATABASE Payroll_Shard4 SET RECOVERY SIMPLE		
+	ALTER DATABASE Payroll_Shard4 SET RECOVERY SIMPLE	
 "
 
 echo "Restoring Payroll_Shard5"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "	
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "
+	USE Master	
 	DECLARE @DatabaseFilename VARCHAR(128)	
 	DECLARE @DataName VARCHAR(128)
 	DECLARE @LogsName VARCHAR(128)
@@ -81,11 +81,12 @@ echo "Restoring Payroll_Shard5"
 	
 	RESTORE DATABASE Payroll_Shard5 FROM DISK=@DatabaseFilename WITH MOVE @DataName TO @NewDataLocation, MOVE @LogsName TO @NewLogsLocation
 
-	ALTER DATABASE Payroll_Shard5 SET RECOVERY SIMPLE
+	ALTER DATABASE Payroll_Shard5 SET RECOVERY SIMPLE	
 "
 
 echo "Restoring Payroll_Shard2"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "	
+	USE Master
 	DECLARE @DatabaseFilename VARCHAR(128)	
 	DECLARE @DataName VARCHAR(128)
 	DECLARE @LogsName VARCHAR(128)
@@ -96,41 +97,35 @@ echo "Restoring Payroll_Shard2"
 	SET @DatabaseFilename = '/backups/Payroll_Shard2.bak'	
 		
 	INSERT INTO @filelist EXEC('RESTORE FILELISTONLY FROM DISK=''' + @DatabaseFilename + ''' ')
-	SET @NewDataLocation = (SELECT '/var/opt/mssql/data/Payroll_Shard5.mdf');
-	SET @NewLogsLocation = (SELECT '/var/opt/mssql/data/Payroll_Shard5_log.ldf');
+	SET @NewDataLocation = (SELECT '/var/opt/mssql/data/Payroll_Shard2.mdf');
+	SET @NewLogsLocation = (SELECT '/var/opt/mssql/data/Payroll_Shard2_log.ldf');
 	SET @DataName =(select LogicalName from @filelist where [Type] ='D')
 	SET @LogsName = (select LogicalName from @filelist where [Type] ='L')
 	DELETE FROM @filelist
 	
 	RESTORE DATABASE Payroll_Shard2 FROM DISK=@DatabaseFilename WITH MOVE @DataName TO @NewDataLocation, MOVE @LogsName TO @NewLogsLocation
 
-	ALTER DATABASE Payroll_Shard2 SET RECOVERY SIMPLE
+	ALTER DATABASE Payroll_Shard2 SET RECOVERY SIMPLE	
 "
 
 echo "Setting up Whitelabel Alias for localhost"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelAlias SET WhiteLabelId = (SELECT Id FROM Payroll_Common.dbo.WhiteLabelShard WHERE HostName='keypay.yourpayroll.co.uk') WHERE HostName='localhost'"
 
-echo "Setting up database users"
-
+echo "Setting up users"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "
-	DECLARE @UseStatement VARCHAR(128)
-	
-	SET @UseStatement = (SELECT 'USE [Payroll_Common]')
-	EXEC sp_sqlexec @UseStatement	
+	USE Payroll_Common
+	CREATE USER payroll FOR LOGIN payroll	
+
+	USE Payroll_Shard2
 	CREATE USER payroll FOR LOGIN payroll
 	
-	SET @UseStatement = (SELECT 'USE [Payroll_Shard2]')
-	EXEC sp_sqlexec @UseStatement	
+	USE Payroll_Shard4
 	CREATE USER payroll FOR LOGIN payroll
-	
-	SET @UseStatement = (SELECT 'USE [Payroll_Shard4]')
-	EXEC sp_sqlexec @UseStatement	
-	CREATE USER payroll FOR LOGIN payroll
-	
-	SET @UseStatement = (SELECT 'USE [Payroll_Shard5]')
-	EXEC sp_sqlexec @UseStatement	
-	CREATE USER payroll FOR LOGIN payroll
+
+	USE Payroll_Shard5
+	CREATE USER payroll FOR LOGIN payroll	
 "
+
 echo "Clearing transaction logs"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "
 	DECLARE @statement NVARCHAR(500);
@@ -163,4 +158,3 @@ echo "Clearing transaction logs"
 
 	DEALLOCATE cursor_databases;
 "
-
