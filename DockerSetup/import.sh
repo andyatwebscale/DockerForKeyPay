@@ -84,30 +84,6 @@ echo "Restoring Payroll_Shard5"
 	ALTER DATABASE Payroll_Shard5 SET RECOVERY SIMPLE	
 "
 
-echo "Restoring Payroll_Shard2"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "	
-	USE Master
-	DECLARE @DatabaseFilename VARCHAR(128)	
-	DECLARE @DataName VARCHAR(128)
-	DECLARE @LogsName VARCHAR(128)
-	DECLARE @NewDataLocation VARCHAR(128)
-	DECLARE @NewLogsLocation VARCHAR(128)		
-	DECLARE @filelist TABLE (LogicalName varchar(128),[PhysicalName] varchar(128),[Type] varchar,[FileGroupName] varchar(128),[Size] varchar(128),[MaxSize] varchar(128),[FileId]varchar(128),[CreateLSN]varchar(128),[DropLSN]varchar(128),[UniqueId]varchar(128),[ReadOnlyLSN]varchar(128),[ReadWriteLSN]varchar(128),[BackupSizeInBytes]varchar(128),[SourceBlockSize]varchar(128),[FileGroupId]varchar(128),[LogGroupGUID]varchar(128),[DifferentialBaseLSN]varchar(128),[DifferentialBaseGUID]varchar(128),[IsReadOnly]varchar(128),[IsPresent]varchar(128),[TDEThumbprint]varchar(128),[SnapshotUrl]varchar(2000))
-		
-	SET @DatabaseFilename = '/backups/Payroll_Shard2.bak'	
-		
-	INSERT INTO @filelist EXEC('RESTORE FILELISTONLY FROM DISK=''' + @DatabaseFilename + ''' ')
-	SET @NewDataLocation = (SELECT '/var/opt/mssql/data/Payroll_Shard2.mdf');
-	SET @NewLogsLocation = (SELECT '/var/opt/mssql/data/Payroll_Shard2_log.ldf');
-	SET @DataName =(select LogicalName from @filelist where [Type] ='D')
-	SET @LogsName = (select LogicalName from @filelist where [Type] ='L')
-	DELETE FROM @filelist
-	
-	RESTORE DATABASE Payroll_Shard2 FROM DISK=@DatabaseFilename WITH MOVE @DataName TO @NewDataLocation, MOVE @LogsName TO @NewLogsLocation
-
-	ALTER DATABASE Payroll_Shard2 SET RECOVERY SIMPLE	
-"
-
 echo "Setting up Whitelabel Alias for localhost"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelAlias SET WhiteLabelId = (SELECT Id FROM Payroll_Common.dbo.WhiteLabelShard WHERE HostName='keypay.yourpayroll.co.uk') WHERE HostName='localhost'"
 
@@ -115,10 +91,7 @@ echo "Setting up users"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "
 	USE Payroll_Common
 	CREATE USER payroll FOR LOGIN payroll	
-
-	USE Payroll_Shard2
-	CREATE USER payroll FOR LOGIN payroll
-	
+		
 	USE Payroll_Shard4
 	CREATE USER payroll FOR LOGIN payroll
 

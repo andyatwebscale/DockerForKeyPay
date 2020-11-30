@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/mssql/server:2019-CU6-ubuntu-16.04
+FROM mcr.microsoft.com/mssql/server:2019-CU8-ubuntu-16.04
 
 USER root
 
