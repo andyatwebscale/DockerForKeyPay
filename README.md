@@ -11,7 +11,7 @@ This repository contains the Dockerfile for setting up SQL 2019 and importing Co
 <br></br>
 ## How to set up SQL Server 2019:
 ***
-- Update the import.sh file to ensure you only restore the databases you have downloaded. Each backup has it's own section
+- Update the import.sh file to ensure you only restore the databases you have downloaded. Each backup has it's own section. Ensure you use an editor that can save unix line endings (LF not CrLF) as they will be run inside a unix environment.
 
 - Open Powershell as an administrator, with the working directory the same as the location of the .Dockerfile file
 - Run the following two commands (Note that in order fo this to work both import.sh and start.sh need to have EOL conversions - Unix - if you have opened/saved them. This is a file-specific setting.)
