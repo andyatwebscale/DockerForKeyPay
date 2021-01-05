@@ -14,8 +14,7 @@ This repository contains the Dockerfile for setting up SQL 2019 and importing Co
 - Update the import.sh file to ensure you only restore the databases you have downloaded. Each backup has it's own section
 
 - Open Powershell as an administrator, with the working directory the same as the location of the .Dockerfile file
-
-- Run the following two commands
+- Run the following two commands (Note that in order fo this to work both import.sh and start.sh need to have EOL conversions - Unix - if you have opened/saved them. This is a file-specific setting.)
 
 ```sh
 docker build -t database .
@@ -71,6 +70,7 @@ wsl --set-default-version 2
 6. Install your chosen Linux distribution from:
 ```sh
 https://aka.ms/wslstore
+Make sure that you have downloaded and installed it, including adding a user/password, before doing step 9 (or you will run into strange errors).
 ```
 7. Check the WSL mode - In PowerShell, run the command
 ```sh
