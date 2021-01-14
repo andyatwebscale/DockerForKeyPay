@@ -90,6 +90,13 @@ echo "Setting up Whitelabel Alias for keypay.yourpayroll.local (Shard 4)"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelAlias SET WhiteLabelId = (SELECT Id FROM Payroll_Common.dbo.WhiteLabelShard WHERE HostName='keypay.yourpayroll.co.uk') WHERE HostName='keypay.yourpayroll.local'"
 echo "Setting up Whitelabel Alias for qbouk.yourpayroll.local (Shard 5)"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "Update WhiteLabelAlias SET HostName = 'qbouk.yourpayroll.local' WHERE Id in (select TOP 1 Id from WhiteLabeLAlias WHERE WhiteLabelId = 326 ORDER BY Id DESC)"
+echo "Setting up Whitelabel Alias for keypaynz.yourpayroll.local (NZ region on Shard 4)"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO WhiteLabelAlias (WhiteLabelId, HostName) VALUES (136, 'keypaynz.yourpayroll.local')"
+echo "Setting up Whitelabel Alias for keypaysg.yourpayroll.local (SG region on Shard 4)"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO WhiteLabelAlias (WhiteLabelId, HostName) VALUES (137, 'keypaysg.yourpayroll.local')"
+echo "Setting up Whitelabel Alias for keypayau.yourpayroll.local (AU region on Shard 4)"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO WhiteLabelAlias (WhiteLabelId, HostName) VALUES (105, 'keypayau.yourpayroll.local')"
+
 
 echo "Setting up users"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "
