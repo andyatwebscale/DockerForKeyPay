@@ -89,13 +89,20 @@ echo "Setting up Whitelabel Alias for localhost"
 echo "Setting up Whitelabel Alias for keypay.yourpayroll.local (Shard 4)"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelAlias SET WhiteLabelId = (SELECT Id FROM Payroll_Common.dbo.WhiteLabelShard WHERE HostName='keypay.yourpayroll.co.uk') WHERE HostName='keypay.yourpayroll.local'"
 echo "Setting up Whitelabel Alias for qbouk.yourpayroll.local (Shard 5)"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "Update WhiteLabelAlias SET HostName = 'qbouk.yourpayroll.local' WHERE Id in (select TOP 1 Id from WhiteLabeLAlias WHERE WhiteLabelId = 326 ORDER BY Id DESC)"
+
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "Update Payroll_Common.dbo.WhiteLabelAlias SET HostName = 'qbouk.yourpayroll.local' WHERE Id in (select TOP 1 Id from WhiteLabeLAlias WHERE WhiteLabelId = 326 ORDER BY Id DESC)"
+
 echo "Setting up Whitelabel Alias for keypaynz.yourpayroll.local (NZ region on Shard 4)"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO WhiteLabelAlias (WhiteLabelId, HostName) VALUES (136, 'keypaynz.yourpayroll.local')"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO Payroll_Common.dbo.WhiteLabelAlias (WhiteLabelId, HostName) VALUES (412, 'keypaynz.yourpayroll.local')"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Shard4.dbo.WhiteLabel SET RegionId =3, BillingRegionId = 3 WHERE id = 412"
+
 echo "Setting up Whitelabel Alias for keypaysg.yourpayroll.local (SG region on Shard 4)"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO WhiteLabelAlias (WhiteLabelId, HostName) VALUES (137, 'keypaysg.yourpayroll.local')"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO Payroll_Common.dbo.WhiteLabelAlias (WhiteLabelId, HostName) VALUES (449, 'keypaysg.yourpayroll.local')"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Shard4.dbo.WhiteLabel SET RegionId =3, BillingRegionId = 3 WHERE id = 449"
+
 echo "Setting up Whitelabel Alias for keypayau.yourpayroll.local (AU region on Shard 4)"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO WhiteLabelAlias (WhiteLabelId, HostName) VALUES (105, 'keypayau.yourpayroll.local')"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO Payroll_Common.dbo.WhiteLabelAlias (WhiteLabelId, HostName) VALUES (402, 'keypayau.yourpayroll.local')"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Shard4.dbo.WhiteLabel SET RegionId =1, BillingRegionId = 1 WHERE id = 402"
 
 
 echo "Setting up users"
