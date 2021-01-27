@@ -10,16 +10,16 @@ RUN apt-get -y update
 
 WORKDIR /startup
 
-COPY ./import_shard245.sh /startup/import_shard245.sh
+COPY ./import.sh /startup/import.sh
 
-COPY ./start_shard245.sh /startup/start_shard245_shard245.sh
+COPY ./start.sh /startup/start.sh
 
-RUN chmod 777 /startup/import_shard245.sh
+RUN chmod 777 /startup/import.sh
 
-RUN chmod 777 /startup/start_shard245.sh
+RUN chmod 777 /startup/start.sh
 
 EXPOSE 1433
 
 USER mssql
 
-CMD ["/startup/start_shard245.sh"]
+CMD ["/startup/start.sh"]
