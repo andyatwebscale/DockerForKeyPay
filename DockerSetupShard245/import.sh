@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "Script for shard 2, 4, 5."
 echo "Waiting 30 seconds for SQL Server to initialise"
 sleep 30s
 
@@ -84,6 +85,30 @@ echo "Restoring Payroll_Shard5"
 	ALTER DATABASE Payroll_Shard5 SET RECOVERY SIMPLE	
 "
 
+echo "Restoring Payroll_Shard2"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "
+	USE Master	
+	DECLARE @DatabaseFilename VARCHAR(128)	
+	DECLARE @DataName VARCHAR(128)
+	DECLARE @LogsName VARCHAR(128)
+	DECLARE @NewDataLocation VARCHAR(128)
+	DECLARE @NewLogsLocation VARCHAR(128)		
+	DECLARE @filelist TABLE (LogicalName varchar(128),[PhysicalName] varchar(128),[Type] varchar,[FileGroupName] varchar(128),[Size] varchar(128),[MaxSize] varchar(128),[FileId]varchar(128),[CreateLSN]varchar(128),[DropLSN]varchar(128),[UniqueId]varchar(128),[ReadOnlyLSN]varchar(128),[ReadWriteLSN]varchar(128),[BackupSizeInBytes]varchar(128),[SourceBlockSize]varchar(128),[FileGroupId]varchar(128),[LogGroupGUID]varchar(128),[DifferentialBaseLSN]varchar(128),[DifferentialBaseGUID]varchar(128),[IsReadOnly]varchar(128),[IsPresent]varchar(128),[TDEThumbprint]varchar(128),[SnapshotUrl]varchar(2000))
+		
+	SET @DatabaseFilename = '/backups/Payroll_Shard2.bak'	
+		
+	INSERT INTO @filelist EXEC('RESTORE FILELISTONLY FROM DISK=''' + @DatabaseFilename + ''' ')
+	SET @NewDataLocation = (SELECT '/var/opt/mssql/data/Payroll_Shard2.mdf');
+	SET @NewLogsLocation = (SELECT '/var/opt/mssql/data/Payroll_Shard2_log.ldf');
+	SET @DataName =(select LogicalName from @filelist where [Type] ='D')
+	SET @LogsName = (select LogicalName from @filelist where [Type] ='L')
+	DELETE FROM @filelist
+	
+	RESTORE DATABASE Payroll_Shard2 FROM DISK=@DatabaseFilename WITH MOVE @DataName TO @NewDataLocation, MOVE @LogsName TO @NewLogsLocation
+
+	ALTER DATABASE Payroll_Shard2 SET RECOVERY SIMPLE	
+"
+
 echo "Setting up Whitelabel Alias for localhost"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelAlias SET WhiteLabelId = (SELECT Id FROM Payroll_Common.dbo.WhiteLabelShard WHERE HostName='keypay.yourpayroll.co.uk') WHERE HostName='localhost'"
 echo "Setting up Whitelabel Alias for keypay.yourpayroll.local (Shard 4)"
@@ -101,8 +126,8 @@ echo "Setting up Whitelabel Alias for keypaysg.yourpayroll.local (SG region on S
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Shard4.dbo.WhiteLabel SET RegionId =3, BillingRegionId = 3 WHERE id = 449"
 
 echo "Setting up Whitelabel Alias for keypayau.yourpayroll.local (AU region on Shard 4)"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO Payroll_Common.dbo.WhiteLabelAlias (WhiteLabelId, HostName) VALUES (402, 'keypayau.yourpayroll.local')"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Shard4.dbo.WhiteLabel SET RegionId =1, BillingRegionId = 1 WHERE id = 402"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO Payroll_Common.dbo.WhiteLabelAlias (WhiteLabelId, HostName) VALUES (996, 'keypayau.yourpayroll.local')"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Shard4.dbo.WhiteLabel SET RegionId =1, BillingRegionId = 1 WHERE id = 996"
 
 
 echo "Setting up users"
@@ -114,6 +139,9 @@ echo "Setting up users"
 	CREATE USER payroll FOR LOGIN payroll
 
 	USE Payroll_Shard5
+	CREATE USER payroll FOR LOGIN payroll	
+	
+	USE Payroll_Shard2
 	CREATE USER payroll FOR LOGIN payroll	
 "
 

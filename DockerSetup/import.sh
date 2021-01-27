@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "Script for shard 4, 5."
 echo "Waiting 30 seconds for SQL Server to initialise"
 sleep 30s
 
@@ -101,8 +102,7 @@ echo "Setting up Whitelabel Alias for keypaysg.yourpayroll.local (SG region on S
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Shard4.dbo.WhiteLabel SET RegionId =3, BillingRegionId = 3 WHERE id = 449"
 
 echo "Setting up Whitelabel Alias for keypayau.yourpayroll.local (AU region on Shard 4)"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO Payroll_Common.dbo.WhiteLabelAlias (WhiteLabelId, HostName) VALUES (402, 'keypayau.yourpayroll.local')"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Shard4.dbo.WhiteLabel SET RegionId =1, BillingRegionId = 1 WHERE id = 402"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO Payroll_Common.dbo.WhiteLabelAlias (WhiteLabelId, HostName) VALUES (996, 'keypayau.yourpayroll.local')"
 
 
 echo "Setting up users"
