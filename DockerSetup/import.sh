@@ -94,8 +94,7 @@ echo "Setting up Whitelabel Alias for qbouk.yourpayroll.local (Shard 5)"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "Update Payroll_Common.dbo.WhiteLabelAlias SET HostName = 'qbouk.yourpayroll.local' WHERE Id in (select TOP 1 Id from WhiteLabeLAlias WHERE WhiteLabelId = 326 ORDER BY Id DESC)"
 
 echo "Setting up Whitelabel Alias for keypaynz.yourpayroll.local (NZ region on Shard 4)"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO Payroll_Common.dbo.WhiteLabelAlias (WhiteLabelId, HostName) VALUES (412, 'keypaynz.yourpayroll.local')"
-/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Shard4.dbo.WhiteLabel SET RegionId =3, BillingRegionId = 3 WHERE id = 412"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelShard SET Hostname = 'keypaynz.yourpayroll.local' WHERE Id = 997"
 
 echo "Setting up Whitelabel Alias for keypaysg.yourpayroll.local (SG region on Shard 4)"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "INSERT INTO Payroll_Common.dbo.WhiteLabelAlias (WhiteLabelId, HostName) VALUES (449, 'keypaysg.yourpayroll.local')"
