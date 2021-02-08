@@ -87,7 +87,8 @@ echo "Restoring Payroll_Shard5"
 
 echo "Setting up Whitelabel Alias for localhost"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelAlias SET WhiteLabelId = (SELECT Id FROM Payroll_Common.dbo.WhiteLabelShard WHERE HostName='keypay.yourpayroll.co.uk') WHERE HostName='localhost'"
-echo "Setting up Whitelabel Alias for keypay.yourpayroll.local (Shard 4)"
+/opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelAlias SET whitelabelid = 297 WHERE hostname = 'keypay.yourpayroll.local'"
+echo "Setting up Whitelabel Alias for keypay.yourpayroll.local (UPDATE Payroll_Common.dbo.Shard 4)"
 /opt/mssql-tools/bin/sqlcmd -U sa -P SaPassword1 -Q "UPDATE Payroll_Common.dbo.WhiteLabelAlias SET WhiteLabelId = (SELECT Id FROM Payroll_Common.dbo.WhiteLabelShard WHERE HostName='keypay.yourpayroll.co.uk') WHERE HostName='keypay.yourpayroll.local'"
 echo "Setting up Whitelabel Alias for qbouk.yourpayroll.local (Shard 5)"
 
